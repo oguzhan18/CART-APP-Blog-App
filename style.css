@@ -1,0 +1,415 @@
+@import url(https://fonts.googleapis.com/css?family=Bitter:400,400italic,700);
+* {
+  box-sizing: border-box;
+  font-family: "Bitter";
+}
+
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes openUp {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes openUp {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+input {
+  padding: 0.5em;
+  font-size: 1em;
+  border: 1px solid #d2d2d2;
+  border-radius: 5px;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+input:hover, input:active {
+  border-color: #b0b0b0;
+}
+
+button {
+  padding: 0.5em;
+  font-size: 1em;
+  border: 1px solid #d2d2d2;
+  border-radius: 5px;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+button:hover {
+  border-color: #b0b0b0;
+}
+button:active {
+  color: rgb(185, 50, 50);
+  background: rgb(117, 117, 117);
+}
+
+a {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  color: white;
+  text-decoration: none;
+}
+a:hover, a:active {
+}
+
+.like {
+  cursor: pointer;
+}
+
+#vue {
+  margin: 0 auto;
+  max-width: 80em;
+}
+#vue .header {
+  margin: 1em;
+}
+#vue .header input {
+  width: calc(100% - 14.95em);
+}
+#vue .header .addImage {
+  margin-right: 1em;
+}
+#vue .header .reset {
+  margin-left: 1em;
+}
+@media (max-width: 550px) {
+  #vue .header input, #vue .header button {
+    margin: 0;
+    width: 100%;
+  }
+  #vue .header .addImage {
+    margin: 0 0 1em 0;
+  }
+  #vue .header .reset {
+    margin: 1em 0 0 0;
+  }
+}
+#vue .loading {
+  text-align: center;
+}
+#vue .loading i {
+  -webkit-animation: spin 1s infinite;
+          animation: spin 1s infinite;
+}
+#vue .loading i :before {
+  padding: 0 1.25px 0.75px 1.25px;
+}
+#vue .noResults {
+  text-align: center;
+  margin: 0 1em;
+}
+#vue #masonry {
+  margin: 0 0.5em;
+}
+#vue #masonry .item {
+  position: relative;
+  width: calc(33vw - 1.5em);
+  max-width: 405px;
+  background-size: cover;
+  margin: 0.5em;
+  cursor: pointer;
+  overflow: hidden;
+}
+@media (max-width: 767px) {
+  #vue #masonry .item {
+    max-width: none;
+    width: calc(50vw - 2em);
+  }
+}
+@media (max-width: 550px) {
+  #vue #masonry .item {
+    width: calc(100% - 1em);
+  }
+}
+#vue #masonry .item img {
+  width: 100%;
+  transition: all 0.2s;
+  float: left;
+  min-height: 100px;
+}
+#vue #masonry .item .overlay {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.644);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+#vue #masonry .item .edit {
+  position: absolute;
+  top: 0;
+  left: -500%;
+  padding: 1em;
+  color: rgb(0, 0, 0);
+  transition: all 0.2s;
+}
+#vue #masonry .item .text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding-left: 1em;
+  z-index: 1;
+  color: rgb(0, 0, 0);
+  overflow: hidden;
+}
+#vue #masonry .item .text h2 {
+  position: relative;
+  margin-bottom: 0.15em;
+  transition: all 0.2s;
+}
+#vue #masonry .item .text p {
+  position: relative;
+  font-size: 0.85em;
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+}
+#vue #masonry .item .data {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-top: 0.75em;
+  padding-right: 1em;
+  z-index: 1;
+  color: white;
+  text-align: right;
+  overflow: hidden;
+}
+#vue #masonry .item .data p {
+  margin: 0;
+  line-height: 2em;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+#vue #masonry .item .data p span {
+  position: relative;
+  right: -500%;
+  transition: all 0.2s;
+}
+#vue #masonry .item .data p span:nth-of-type(0) {
+  transition-delay: 0s;
+}
+#vue #masonry .item .data p span:nth-of-type(1) {
+  transition-delay: 0.025s;
+}
+#vue #masonry .item .data p span:nth-of-type(2) {
+  transition-delay: 0.05s;
+}
+#vue #masonry .item .data p span:nth-of-type(3) {
+  transition-delay: 0.075s;
+}
+#vue #masonry .item .data p span:nth-of-type(4) {
+  transition-delay: 0.1s;
+}
+#vue #masonry .item .data p span:first-of-type {
+  right: 0;
+}
+#vue #masonry .item:hover .overlay {
+  opacity: 1;
+}
+#vue #masonry .item:hover .edit {
+  left: 0;
+}
+#vue #masonry .item:hover h2, #vue #masonry .item:hover p {
+  transform: translateY(0);
+  max-height: 300px;
+}
+#vue #masonry .item:hover h2 span, #vue #masonry .item:hover p span {
+  right: 0;
+}
+#vue .modalWrapper {
+  position: relative;
+}
+#vue .modalWrapper .close {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1em;
+  color: white;
+  font-size: 1.5em;
+  z-index: 6;
+  cursor: pointer;
+}
+#vue .modalWrapper .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(133, 133, 133, 0.8);
+  color: rgb(23, 91, 151);
+  z-index: 4;
+}
+#vue .modalWrapper .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 2em);
+  -webkit-animation: openUp 0.1s;
+          animation: openUp 0.1s;
+  z-index: 5;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+#vue .modalWrapper .modal img {
+  max-width: 85vw;
+  max-height: 85vh;
+}
+@media (max-width: 550px) {
+  #vue .modalWrapper .modal img {
+    max-width: 75vw;
+  }
+}
+#vue .modalWrapper .modal .prev, #vue .modalWrapper .modal .next {
+  position: absolute;
+  color: white;
+  font-size: 2em;
+  cursor: pointer;
+  top: calc(50% - 0.75em);
+  transform: translateY(-50%);
+  padding: 1em;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  z-index: 5;
+}
+#vue .modalWrapper .modal .prev {
+  left: -2em;
+}
+#vue .modalWrapper .modal .next {
+  right: -2em;
+}
+#vue .modalWrapper .modal .modalData {
+  display: flex;
+  color: white;
+}
+#vue .modalWrapper .modal .modalData span {
+  flex-grow: 1;
+  text-align: center;
+}
+#vue .modalWrapper .modal .modalData span.like {
+  cursor: pointer;
+}
+#vue .modalWrapper .modal.addModal, #vue .modalWrapper .modal.deleteModal {
+  
+  border-radius: 5px;
+  padding: 1em;
+  overflow: scroll;
+  width: 350px;
+}
+@media (max-width: 767px) {
+  #vue .modalWrapper .modal.addModal, #vue .modalWrapper .modal.deleteModal {
+    width: auto;
+    min-width: 275px;
+  }
+}
+#vue .modalWrapper .modal.addModal h2, #vue .modalWrapper .modal.deleteModal h2 {
+  margin-bottom: 0.25em;
+}
+#vue .modalWrapper .modal.addModal .close, #vue .modalWrapper .modal.deleteModal .close {
+  position: absolute;
+  top: 0em;
+  right: 0em;
+  color: rgb(255, 255, 255);
+  padding: 0.5em 0.55em;
+  cursor: pointer;
+}
+#vue .modalWrapper .modal.addModal .delete, #vue .modalWrapper .modal.deleteModal .delete {
+  position: absolute;
+  top: 0em;
+  left: 0em;
+  color: rgb(141, 13, 13);
+  font-size: 1.35em;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+}
+#vue .modalWrapper .modal.addModal input, #vue .modalWrapper .modal.deleteModal input {
+  display: block;
+  margin: 0.5em 0;
+}
+#vue .modalWrapper .modal.addModal input, #vue .modalWrapper .modal.addModal button, #vue .modalWrapper .modal.deleteModal input, #vue .modalWrapper .modal.deleteModal button {
+  width: 100%;
+}
+#vue .modalWrapper .modal.addModal .tags input, #vue .modalWrapper .modal.deleteModal .tags input {
+  display: inline-block;
+  width: calc(100% - 3.15em);
+}
+#vue .modalWrapper .modal.addModal .tags .addTag, #vue .modalWrapper .modal.addModal .tags .removeTag, #vue .modalWrapper .modal.deleteModal .tags .addTag, #vue .modalWrapper .modal.deleteModal .tags .removeTag {
+  display: inline-block;
+  width: auto;
+  padding: 0.5em 1em;
+}
+#vue .modalWrapper .modal.deleteModal .or {
+  text-align: center;
+  margin: 0.5em auto;
+}
+#vue .loginWrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  text-align: right;
+  padding: 1em;
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom-left-radius: 5px;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  max-width: 450px;
+}
+#vue .loginWrapper input, #vue .loginWrapper button {
+  display: block;
+  width: 100%;
+}
+#vue .loginWrapper input:not(:first-of-type), #vue .loginWrapper button:not(:first-of-type) {
+  margin: 0.75em 0;
+}
+#vue .loginWrapper span {
+  cursor: pointer;
+  padding: 1em 0;
+}
+h1{
+
+}

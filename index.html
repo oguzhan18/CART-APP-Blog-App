@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/%C3%87art_app_beyaz_%282%29.png/600px-%C3%87art_app_beyaz_%282%29.png" type="image/x-icon">
+  </head>
+  <body>
+    <div id="vue" class="hidden">
+      <div class="content">
+        <div class="header">
+          <h1>{{ title }}</h1>
+          <button
+            @click="toggleAddEditModal('add')"
+            class="addImage"
+            v-show="loggedIn"
+          >
+            Add Blog
+          </button>
+          <input
+            v-model="imagesSearchString"
+            placeholder="Search blog here"
+          />
+          <button class="reset" @click="resetSearchString()">Reset</button>
+          <p>
+            <span v-show="!loggedIn">{{ notLoggedInDescription }}</span>
+            <span>{{ description }}</span>
+            <span v-show="loggedIn">{{ loggedInDescription }}</span>
+          </p>
+        </div>
+        <div v-show="!imagesLoaded" class="loading">
+          <i class="fa fa-circle-o-notch"></i>
+        </div>
+        <div v-show="!loading && filteredImages.length == 0" class="noResults">
+          {{ noResultsText }}
+        </div>
+        <div
+          v-show="!loading"
+          id="masonry"
+          v-bind:class="{ 'invisible': !imagesLoaded }"
+        >
+          <div
+            v-for="(image, index) in filteredImages"
+            :key="index"
+            @click="viewImageInModal(image, index)"
+            class="item"
+          >
+            <div class="overlay"></div>
+            <h1> {{image.url}} </h1>
+            <!-- <img :src="image.url" /> -->
+            <span
+              class="edit"
+              v-show="image.creator == myUsername"
+              @click.stop="toggleAddEditModal('edit', image, index)"
+              ><i class="fa fa-cog"></i
+            ></span>
+       
+            <div class="data">
+              <p>
+                <span @click.stop="likeImage(image)"
+                  >{{ image.likes }}&nbsp;&nbsp;<i
+                    class="fa fa-thumbs-o-up"
+                  ></i></span
+                ><br />
+                <span
+                  >{{ image.views }}&nbsp;&nbsp;<i class="fa fa-eye"></i></span
+                ><br />
+                <span @click.stop="downloadImage(image)"
+                  ><a target="_blank" v-bind:href="image.url"
+                    >{{ image.downloads }}&nbsp;&nbsp;<i
+                      class="fa fa-download"
+                    ></i></a></span
+                ><br />
+                <span
+                  >{{ image.creator }}&nbsp;&nbsp;<i
+                    class="fa fa-camera"
+                  ></i></span
+                ><br />
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        tabindex="0"
+        id="imageModalWrapper"
+        class="modalWrapper"
+        v-show="!loading && showImageModal"
+        @keyup.left="changeModalImage(imageModalData.index, 'prev')"
+        @keyup.right="changeModalImage(imageModalData.index, 'next')"
+        @keyup.esc="toggleImageModal()"
+      >
+        <div class="close" @click="toggleImageModal()">
+          <i class="fa fa-close"></i>
+        </div>
+        <div class="overlay" @click="toggleImageModal()"></div>
+        <div class="modal">
+          <div
+            class="prev"
+            @click="changeModalImage(imageModalData.index, 'prev')"
+          >
+            <i class="fa fa-angle-left"></i>
+          </div>
+          <div
+            class="next"
+            @click="changeModalImage(imageModalData.index, 'next')"
+          >
+            <i class="fa fa-angle-right"></i>
+          </div>
+          <h1> {{imageModalData.url}} </h1>
+          <!-- <img v-bind:src="imageModalData.url" /> -->
+          <!-- <p class="modalData">
+            <span @click.stop="likeImage(imageModalData)"
+              ><span class="like"
+                >{{ imageModalData.likes }}&nbsp;&nbsp;<i
+                  class="fa fa-thumbs-o-up"
+                ></i></span></span
+            ><br />
+            <span
+              >{{ imageModalData.views }}&nbsp;&nbsp;<i
+                class="fa fa-eye"
+              ></i></span
+            ><br />
+           <span @click.stop="downloadImage(imageModalData)"
+              ><a target="_blank" v-bind:href="imageModalData.url"
+                >{{ imageModalData.downloads }}&nbsp;&nbsp;<i
+                  class="fa fa-download"
+                ></i></a></span>
+            <br />
+            <span
+              >{{ imageModalData.creator }}&nbsp;&nbsp;<i
+                class="fa fa-camera"
+              ></i></span
+            ><br />
+          </p> -->
+        </div>
+      </div>
+      <div
+        id="addEditModalWrapper"
+        class="modalWrapper"
+        v-show="!loading && showAddModal"
+        @keyup.esc="toggleAddEditModal()"
+      >
+        <div class="overlay" @click="toggleAddEditModal()"></div>
+        <div class="modal addModal">
+          <div class="close" @click="toggleAddEditModal()">
+            <i class="fa fa-close"></i>
+          </div>
+          <div
+            v-show="modalData.modalType.indexOf('Edit') > -1"
+            class="delete"
+            @click="toggleDeleteModal()"
+          >
+            <i class="fa fa-trash-o"></i>
+          </div>
+          <h2>{{ modalData.modalType }} Blog</h2>
+          <input placeholder="Blog title" v-model="modalData.title" />
+          <input placeholder="Blog Write" v-model="modalData.url" />
+          <span v-for="(tag, index) in modalData.tags" class="tags">
+            <button v-show="index === 0" class="addTag" @click="addTag(index)">
+              <i class="fa fa-plus"></i>
+            </button>
+            <input
+              v-model="modalData.tags[index]"
+              v-bind:placeholder="'Tag ' + (index+1)"
+            />
+            <button
+              v-show="index !== 0"
+              class="removeTag"
+              @click="removeTag(index)"
+            >
+              <i class="fa fa-minus"></i>
+            </button>
+          </span>
+          <button
+            v-show="modalData.modalType.indexOf('Add') > -1"
+            @click="addNewImage()"
+          >
+            Add Blog
+          </button>
+          <button
+            v-show="modalData.modalType.indexOf('Edit') > -1"
+            @click="updateImage()"
+          >
+            Update Blog
+          </button>
+        </div>
+      </div>
+      <div
+        id="deleteModalWrapper"
+        class="modalWrapper"
+        v-show="!loading && showDeleteModal"
+        @keyup.esc="toggleDeleteModal(true)"
+      >
+        <div class="overlay" @click="toggleDeleteModal(true)"></div>
+        <div class="modal deleteModal">
+          <div class="close" @click="toggleDeleteModal(true)">
+            <i class="fa fa-close"></i>
+          </div>
+          <h2>Delete Blog</h2>
+          <p>
+            Are you sure you want to delete
+            <strong>{{ modalData.title }}</strong>?
+          </p>
+          <button @click="toggleDeleteModal(true)">Cancel</button>
+          <p class="or">or</p>
+          <button @click="deleteImage(modalData)">Delete Image</button>
+        </div>
+      </div>
+      <div class="loginWrapper">
+        <span class="edit" @click="toggleLogin()">
+          <span v-show="!loggedIn"><i class="fa fa-sign-in"></i> Log In</span>
+          <span v-show="loggedIn"><i class="fa fa-sign-out"></i> Log Out</span>
+        </span>
+        <div v-show="showLogin && loggedIn == false">
+          <p class="notification" v-bind:class="notificationStatus">
+            {{ notification }}
+          </p>
+          <input
+            class="nameInput"
+            v-model="newUser.username"
+            placeholder="Username"
+            @keyup="isExistingUser()"
+            @keyup.enter="login()"
+          />
+          <input
+            class="passwordInput"
+            v-model="newUser.password"
+            type="password"
+            placeholder="Password"
+            @keyup.tab="isExistingUser()"
+            @keyup.enter="login()"
+          />
+          <button @click="login()">{{ loginButtonText }}</button>
+        </div>
+        <div v-show="showLogin && loggedIn == true">
+          <h2>Hey, {{ myUsername }}!</h2>
+          <p>{{ loggedInLoginDescription }}</p>
+          <button @click="logout()">Log Out</button>
+        </div>
+      </div>
+    </div>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4.1/dist/masonry.pkgd.js"></script>
+    <script src="https://unpkg.com/imagesloaded@4.1/imagesloaded.pkgd.js"></script>
+    <script src="https://gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+    <script src="https://unpkg.com/vuefire@1.4.1/dist/vuefire.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
