@@ -28,7 +28,7 @@ Use it as you want
 <img src="img/img-2.png">
 
 ## Web App in Web Site
-http://oguzhancart.likesyou.org/
+http://www.cartappblog.rf.gd/
 
 ## For Support
 For support, send an email to oguzhancart1@gmail.com or you are invited to our telegram channel https://t.me/vsform_tr  
